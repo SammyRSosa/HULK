@@ -15,13 +15,14 @@
 
                 while(true)
                 {
-                    string sampl = Console.ReadLine();
+                    string sampl = "print(cos(0))";
 
                     if (sampl == "break;")
                     {
                         break;
                     }
                     Proyecto project = new Proyecto(sampl,mainscope);
+
                     mainscope = project.p.scopeactual;
 
                 }  

@@ -122,7 +122,7 @@ namespace Project
                     return new Printnode(respuesta);
                 }
                 
-                if (this.lookahead.Content == "cos"|| this.lookahead.Content == "sin" || this.lookahead.Content == "tan" || this.lookahead.Content == "cot" || this.lookahead.Content == "asin" || this.lookahead.Content == "acos" || this.lookahead.Content == "atan" || this.lookahead.Content == "acot")
+                if (this.lookahead.Content == "cos"|| this.lookahead.Content == "sin" || this.lookahead.Content == "tan" || this.lookahead.Content == "asin" || this.lookahead.Content == "acos" || this.lookahead.Content == "atan" )
                 {
                     string funcion = this.lookahead.Content;
                     eat("SYMBOL");

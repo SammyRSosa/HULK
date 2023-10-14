@@ -122,7 +122,17 @@ public class Printnode : ExpressionNode
 
     public override dynamic Evaluate()
     {
-        
+        try
+        {
+            if (Exp.Evaluate().GetNodeType() == "null")
+            {
+                return new nullnode();
+            }
+        }
+        catch
+        {
+            
+        }
         Console.WriteLine($"{this.Exp.Evaluate()}");
         return new nullnode();
     }
@@ -190,7 +200,7 @@ public class nullnode : ExpressionNode
 
     public override string GetNodeType()
     {
-        throw new NotImplementedException();
+        return "null";
     }
 }
 
