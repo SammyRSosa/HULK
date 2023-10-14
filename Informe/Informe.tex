@@ -1,0 +1,69 @@
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+\author{Sammy Sosa}
+\title{HULK}
+
+\begin{document}
+\maketitle
+
+
+\section{Introduccion} 
+Este informe detalla el desarrollo del proyecto "HULK" utilizando Visual Studio Code como entorno de desarrollo. HULK es un proyecto que tiene como objetivo crear un interepreter donde se reciba y ejecute comandos o lineas de codigo utilizando clases abstractas y basandose en un lexer y un parser. Además, se han implementado funciones ,variables ,condicionales entre otras cosas que seran expuestas en este informe.
+
+
+\section{Detalles a destacar del proyecto}
+\begin{enumerate}
+  \item Un Lexer que tokeniza una entrada
+  \item Un Parser que crea expresiones
+  \item Un sistema de deteccion de errores usando exceptions
+  \item Uso de clases abstractas como base para las expresiones
+  \item implementacion de funciones variables etc.
+\end{enumerate}
+
+
+\newpage 
+\section*{Lexer}
+Dado un string input Hulk realiza una tokenizacion donde siguiendo unas bases de lenguaje mediante regex identifica que tipo de token es cada palabra.Este puede detectar errores como la falta de un final de linea o un token invalido.
+
+\newpage 
+\section*{Parser}
+En este se encuentra el groso del proyecto .El parser "come" tokens y devuelve una expresion que representa el orden logico que siguieron estos tokens.Esta expresiones ademas saben como evaluarse y la union de todos los tipos de expresiones reunen todas las posibles entradas que puede recibir "HULK".El parser detecta los errores donde se espero un token y se recibio uno equivocado o ninguno.
+
+\newpage 
+\section*{Errores}
+Usando try/catch y las exceptions se logra determinar si el codigo es un codigo valido y ademas saber que problema ocurrrio todo sin detener el codigo asi no se pierde la consola.
+
+\newpage 
+\section*{Clases Abstractas}
+Las clases abstractas son ampliamente utilizadas en el proyecto para hacer todas las expresiones iguales en algunos aspectos y asi poder interactuar entre ellas sabiendo como se comportan las expresiones que abarca el lenguaje.
+
+\newpage 
+\section*{Funciones}
+funciones:
+Una funcion debe ser declarada de la siguiente forma 
+function name(input) => codigo
+y se permite sobrescribir una funcion ya existente
+variables:
+Mediante el operador let
+let name = value in codigo
+se puede introducir una variable a un universo de codigo
+se pueden introducir mas de una usando una coma entre las variables
+IfElse:
+Una expresion condicional de la forma
+if(ConditionalExpression) action 1 else action 2
+donde dependiendo del valor de una la expresion se realizara la action 1 o 2
+
+Hay tambien funciones reservadas como sin cos tan entre otras
+
+\newpage
+\section*{Resumen}
+Mediante el proyecto busque una manera rapida y poco repetitiva de analizar las expresiones hasta que me encontre con la idea de analizar todas como un mismo objeto que pueden tener aspectos singulares.
+
+\newpage 
+\section*{Conclusiones}
+Debo decir que seguire trabajando en la parte de los errores y creare una experiencia visual mas placentera pero estoy bastante alegre con el progreso que alcance mediante la elaboracion de este proyecto
+\end{document}
