@@ -39,7 +39,7 @@
                 {
                 // Thanks to [steven levithan][2] for this great quoted string
                 // regex
-                new TokenDefinition(@"([??'])(?:\\\1|.)*?\1", "QUOTED-STRING"),
+                new TokenDefinition(@"([""'])(?:\\\1|.)*?\1", "QUOTED-STRING"),
                 new TokenDefinition(@"[0-9]+[a-z][0-9A-Za-z_]*", "BAD-SYMBOL"),
                 // Thanks to http://www.regular-expressions.info/floatingpoint.html
                 new TokenDefinition(@"\d*\.\d+([eE][-+]?\d+)?", "FLOAT"),
