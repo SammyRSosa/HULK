@@ -17,13 +17,22 @@
                 {
                     string sampl = Console.ReadLine();
 
-                    if (sampl == "break;")
-                    {
-                        break;
-                    }
-                    Proyecto project = new Proyecto(sampl,mainscope);
-                    mainscope = project.p.scopeactual;
-
+                        if (sampl != "")
+                        {
+                            if(sampl[sampl.Length -1] != ';')
+                            {
+                                if (sampl == "break;")
+                                {
+                                    break;
+                                }
+                                Proyecto project = new Proyecto(sampl,mainscope);
+                                mainscope = project.p.scopeactual;
+                            }
+                            else
+                            {
+                                System.Console.WriteLine("; expected");
+                            }
+                        }
                 }  
             
 
