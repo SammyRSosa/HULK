@@ -262,7 +262,7 @@ namespace Project
                 eat(this.lookahead.Type);
                 while(this.lookahead != null)
                 {
-                    Code += this.lookahead.Content;
+                    Code += " " + this.lookahead.Content;
                     eat(this.lookahead.Type);
                 }
 

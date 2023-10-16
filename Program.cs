@@ -19,7 +19,7 @@
 
                         if (sampl != "")
                         {
-                            if(sampl[sampl.Length -1] != ';')
+                            if(sampl[sampl.Length -1] == ';')
                             {
                                 if (sampl == "break;")
                                 {
