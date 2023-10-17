@@ -25,8 +25,15 @@
                                 {
                                     break;
                                 }
-                                Proyecto project = new Proyecto(sampl,mainscope);
-                                mainscope = project.p.scopeactual;
+                                try
+                                {
+                                    Proyecto project = new Proyecto(sampl,mainscope);
+                                    mainscope = project.p.scopeactual;
+                                }
+                                catch (System.Exception)
+                                {
+                                    
+                                }
                             }
                             else
                             {

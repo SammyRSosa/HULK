@@ -27,7 +27,7 @@ namespace Project
 
             Token token = this.lookahead;
             if (token == null)
-                throw new Exception("expected");
+                throw new Exception("null reference");
 
             if (token.Type != Type)
                 throw new Exception($"{Type} expected");
