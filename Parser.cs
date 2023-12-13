@@ -11,6 +11,8 @@ namespace Project
         public ExpressionNode MAthExpression;
         public Scope scopeactual;
 
+        public Lexer L { get; }
+        public Scope Scope { get; }
 
         public Parser(Program.Lexer l,Scope scope)
         {
@@ -20,7 +22,11 @@ namespace Project
             this.MAthExpression = Expression();
         }
 
-
+        public Parser(Lexer l1, Scope scope)
+        {
+            L = l1;
+            Scope = scope;
+        }
 
         public Token eat(string Type)
         {
