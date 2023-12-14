@@ -9,26 +9,28 @@
         {
 
             Scope mainscope = new Scope();
-
+            mainscope.Variables.Add("pi",Math.PI);
 
             System.Console.WriteLine("Bienvenido a HULK");
 
             while (true)
             {
-                string sampl = Console.ReadLine();
+                string sample = Console.ReadLine();
 
-                if (sampl != "")
+                if (sample != "")
                 {
-                    if (sampl[sampl.Length - 1] == ';')
+                    if (sample[sample.Length - 1] == ';')
                     {
-                        if (sampl == "break;")
+                        if (sample == "break;")
                         {
                             break;
                         }
                         try
                         {
-                            Proyecto project = new Proyecto(sampl, mainscope);
-                            mainscope = project.parser.scopeactual;
+                            Proyecto project = new Proyecto(sample, mainscope);
+
+                            mainscope = Scope.Copy(project.parser.scopeactual);
+                            
                         }
                         catch (System.Exception)
                         {
@@ -47,11 +49,16 @@
         public class Proyecto
         {
             public Parser parser;
-            public Lexer lexer;
-            public Proyecto(string Code, Scope scope)
-            {
+            public dynamic result;
+            public Scope scope_actual;
 
-                string sample = Code;
+            public Proyecto(string Code, Scope scope_received)
+            {
+                this.scope_actual = new Scope();
+
+                scope_actual = Scope.Copy(scope_received);
+
+                string samplee = Code;
                 TokenDefinition[] defs = new TokenDefinition[]
                 {
                 new TokenDefinition(@"([""'])(?:\\\1|.)*?\1", "QUOTED-STRING"),
@@ -85,13 +92,13 @@
                 new TokenDefinition(@"\;", "SEMI"),
                 };
             
-                TextReader r = new StringReader(sample);
-                this.lexer = new Lexer(r,defs);
+                TextReader r = new StringReader(samplee);
+                Lexer lexer = new Lexer(r,defs);
 
                 try
                 {
-                    this.parser = new Parser(lexer, scope);
-                    dynamic m = parser.MAthExpression.Evaluate();
+                    this.parser = new Parser(lexer, scope_actual);
+                    this.result = parser.MAthExpression.Evaluate();
                 }
                 catch (System.Exception message)
                 {

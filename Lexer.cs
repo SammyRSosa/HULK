@@ -103,9 +103,5 @@ namespace Project
             this.Content = Content;
             this.Position = Position;
         }
-        public override string ToString()
-        {
-            return $"{this.Type}, {this.Content}, {this.Position}";
-        }
     }
 }

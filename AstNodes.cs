@@ -65,7 +65,7 @@ public class AddNode : BinaryArithmeticNode
 {
     public override dynamic Evaluate()
     {
-        return this.Left.Evaluate() + this.Right.Evaluate();
+        return this.Left.Evaluate() + this.Right.Evaluate() ;
     }
    
     public AddNode(ExpressionNode left, ExpressionNode right) : base(left, right)

@@ -5,27 +5,18 @@ namespace Project
 
     public class Parser
     {
-       
-        public Program.Lexer l;
+
+        public Project.Lexer lexer;
         public Token lookahead;
         public ExpressionNode MAthExpression;
         public Scope scopeactual;
 
-        public Lexer L { get; }
-        public Scope Scope { get; }
-
-        public Parser(Program.Lexer l,Scope scope)
+        public Parser(Project.Lexer lexer, Scope scope)
         {
             this.scopeactual = scope;
-            this.l = l;
-            this.lookahead = l.Next();
+            this.lexer = lexer;
+            this.lookahead = lexer.Next();
             this.MAthExpression = Expression();
-        }
-
-        public Parser(Lexer l1, Scope scope)
-        {
-            L = l1;
-            Scope = scope;
         }
 
         public Token eat(string Type)
@@ -39,7 +30,7 @@ namespace Project
                 throw new Exception($"{Type} expected");
 
 
-            this.lookahead = this.l.Next();
+            this.lookahead = this.lexer.Next();
 
             return token;
 
@@ -50,36 +41,37 @@ namespace Project
         {
             ExpressionNode left = this.ArigmeticalExpression();
 
-            while(this.lookahead != null && (this.lookahead.Type == "LESS" || this.lookahead.Type == "LESS-EQUAL" || this.lookahead.Type == "EQUAL" || this.lookahead.Type == "GREATER" || this.lookahead.Type == "GREATER-EQUAL"))
+            while (this.lookahead != null && (this.lookahead.Type == "LESS" || this.lookahead.Type == "LESS-EQUAL" || this.lookahead.Type == "EQUAL" || this.lookahead.Type == "GREATER" || this.lookahead.Type == "GREATER-EQUAL"))
             {
                 if (this.lookahead.Type == "LESS")
                 {
                     this.eat("LESS");
                     ExpressionNode right = this.ArigmeticalExpression();
-                    left = new LessNode(left,right);
+                    left = new LessNode(left, right);
                 }
                 else if (this.lookahead.Type == "LESS-EQUAL")
                 {
                     this.eat("LESS-EQUAL");
                     ExpressionNode right = this.ArigmeticalExpression();
-                    left = new LessEqualNode(left,right);
+                    left = new LessEqualNode(left, right);
                 }
                 else if (this.lookahead.Type == "EQUAL")
                 {
                     this.eat("EQUAL");
                     ExpressionNode right = this.ArigmeticalExpression();
-                    left = new EqualNode(left,right);
+                    left = new EqualNode(left, right);
                 }
-                else  if (this.lookahead.Type == "GREATER-EQUAL")
+                else if (this.lookahead.Type == "GREATER-EQUAL")
                 {
                     this.eat("GREATER-EQUAL");
                     ExpressionNode right = this.ArigmeticalExpression();
-                    left = new GreaterEqualNode(left,right);
-                }else  if (this.lookahead.Type == "GREATER")
+                    left = new GreaterEqualNode(left, right);
+                }
+                else if (this.lookahead.Type == "GREATER")
                 {
                     this.eat("GREATER");
                     ExpressionNode right = this.ArigmeticalExpression();
-                    left = new GreaterNode(left,right);
+                    left = new GreaterNode(left, right);
                 }
 
             }
@@ -112,23 +104,37 @@ namespace Project
         }
 
         public ExpressionNode Primary()
-        {   
+        {
             if (this.lookahead.Type == "SYMBOL")
             {
-                
+
                 if (this.lookahead.Content == "print")
                 {
                     eat("SYMBOL");
                     eat("LEFT");
 
-                    ExpressionNode respuesta = this.Expression();
+                    dynamic respuesta = this.Expression().Evaluate();
 
                     eat("RIGHT");
 
                     return new Printnode(respuesta);
                 }
                 
-                if (this.lookahead.Content == "cos"|| this.lookahead.Content == "sin" || this.lookahead.Content == "tan" || this.lookahead.Content == "asin" || this.lookahead.Content == "acos" || this.lookahead.Content == "atan" )
+                if (this.lookahead.Content == "log")
+                {
+                    eat("SYMBOL");
+                    eat("LEFT");
+                    dynamic bas = this.Expression();
+                    eat("DOT");
+                    dynamic exponent = this.Expression();
+                    
+                    eat("RIGHT");
+
+                    return new Log_node(bas,exponent);
+                        
+                }
+
+                if (this.lookahead.Content == "cos" || this.lookahead.Content == "sin" || this.lookahead.Content == "tan" || this.lookahead.Content == "asin" || this.lookahead.Content == "acos" || this.lookahead.Content == "atan")
                 {
                     string funcion = this.lookahead.Content;
                     eat("SYMBOL");
@@ -137,30 +143,30 @@ namespace Project
                     dynamic exp = this.Expression();
                     eat("RIGHT");
 
-                    return new TrigNode(funcion,exp);
+                    return new TrigNode(funcion, exp);
 
                 }
-                
+
                 string name = this.lookahead.Content;
                 eat("SYMBOL");
 
-              
+
 
                 if (this.lookahead != null && this.lookahead.Type == "LEFT")
                 {
-                      if(!scopeactual.Funciones.ContainsKey(name))
+                    if (!scopeactual.Funciones.ContainsKey(name))
                     {
                         throw new Exception("missing Symbol");
                     }
 
-                    Dictionary<int,dynamic> dic = new Dictionary<int, dynamic>{};
+                    Dictionary<int, dynamic> dic = new Dictionary<int, dynamic> { };
                     int count = 0;
-                    
+
                     eat("LEFT");
                     while (true)
                     {
                         dynamic var = this.Expression().Evaluate();
-                        dic.Add(count,var);
+                        dic.Add(count, var);
 
                         if (this.lookahead.Type == "RIGHT")
                         {
@@ -170,39 +176,36 @@ namespace Project
                         count++;
                     }
                     eat("RIGHT");
-                    
 
-                    Scope scopefuncion = scopeactual;
-                    scopefuncion.Variables = new Dictionary<string, dynamic>{};
-                    
+
+                    Scope scopefuncion = Scope.Copy(scopeactual);
+
+                    scopefuncion.Variables = new Dictionary<string, dynamic> { };
+
                     for (int i = 0; i < dic.Count; i++)
                     {
-                        scopefuncion.Variables.Add(scopefuncion.Funciones[name].var[i].name,dic[i]);
+                        scopefuncion.Variables.Add(scopefuncion.Funciones[name].var[i].name, dic[i]);
                     }
-                    
 
-                    Program.Proyecto proyecto = new Program.Proyecto(scopeactual.Funciones[name].code,scopefuncion);
-                    
-                    ExpressionNode a = proyecto.p.MAthExpression;
-                    return a;
-                    
-                }else
+
+                    return new node_function(scopefuncion,scopeactual.Funciones[name]);
+                }
+                else
                 {
                     if (!this.scopeactual.Variables.ContainsKey(name))
                     {
                         throw new Exception("missing Symbol");
-                        return new ErrorNode("missing Symbol");
                     }
-                    return new Variable(name,scopeactual);
-                    
+                    return new Variable(name, scopeactual);
+
                 }
-            }            
+            }
 
             if (this.lookahead.Content == "let")
             {
                 eat("KEYWORD");
-                
-                while(true)
+
+                while (true)
                 {
                     string name = this.lookahead.Content;
                     eat("SYMBOL");
@@ -215,7 +218,7 @@ namespace Project
                     }
                     else
                     {
-                        scopeactual.Variables.Add(name,value);
+                        scopeactual.Variables.Add(name, value);
                     }
 
                     if (this.lookahead.Content == ",")
@@ -241,11 +244,11 @@ namespace Project
                 eat("LEFT");
 
                 int count = 0;
-                Dictionary<int,Variable> vars = new Dictionary<int, Variable>{}; 
-                
-                while(true)
+                Dictionary<int, Variable> vars = new Dictionary<int, Variable> { };
+
+                while (true)
                 {
-                    vars.Add(count,new Variable(this.lookahead.Content,scopeactual));
+                    vars.Add(count, new Variable(this.lookahead.Content, scopeactual));
                     count++;
                     eat("SYMBOL");
                     if (this.lookahead.Type == "DOT")
@@ -260,13 +263,13 @@ namespace Project
                 }
 
                 eat("RIGHT");
-                
+
                 eat("EQUAL");
                 eat("GREATER");
 
                 string Code = this.lookahead.Content;
                 eat(this.lookahead.Type);
-                while(this.lookahead != null)
+                while (this.lookahead != null)
                 {
                     Code += " " + this.lookahead.Content;
                     eat(this.lookahead.Type);
@@ -274,54 +277,56 @@ namespace Project
 
                 if (scopeactual.Funciones.ContainsKey(name))
                 {
-                    scopeactual.Funciones[name] = new Function(name,vars,Code);    
+                    scopeactual.Funciones[name] = new Function(name, vars, Code);
                 }
                 else
                 {
-                    scopeactual.Funciones.Add(name,new Function(name,vars,Code));
+                    scopeactual.Funciones.Add(name, new Function(name, vars, Code));
                 }
 
-                return new Function(name,vars,Code);
+                return new Function(name, vars, Code);
 
             }
 
-            if(this.lookahead.Content == "if")
+            if (this.lookahead.Content == "if")
             {
                 eat("KEYWORD");
                 eat("LEFT");
-                
+
                 ExpressionNode Condition = this.Expression();
-                
+
                 eat("RIGHT");
-                
-                ExpressionNode Action = this.Expression();
+                string Code = "";
 
-                if (this.lookahead.Content == "else")
+                while (this.lookahead.Content != "else")
                 {
-                    eat("KEYWORD");
+                    Code += " " + this.lookahead.Content;
+                    eat(this.lookahead.Type);
                 }
-                else
+
+                eat("KEYWORD");
+
+                string Code2 = "";
+                while (this.lookahead.Content != ";")
                 {
-                    throw new Exception("else expected");
+                    Code2 += " " + this.lookahead.Content;
+                    eat(this.lookahead.Type);
                 }
-                
 
-                ExpressionNode ElseAction = this.Expression();
-
-                return new IfElseExpression(Condition,Action,ElseAction);
+                return new IfElseExpression(Condition, Code, Code2,this.scopeactual);
             }
-            
+
             if (this.lookahead.Type == "LEFT")
             {
                 return this.ParenthesizedExpression();
             }
 
-            if (this.lookahead.Type == "SUB") 
+            if (this.lookahead.Type == "SUB")
             {
                 return this.UnaryExpression();
             }
 
-            if(this.lookahead.Type == "QUOTED-STRING")
+            if (this.lookahead.Type == "QUOTED-STRING")
             {
                 ExpressionNode a = new LiteralNode(this.lookahead.Content);
                 eat("QUOTED-STRING");
@@ -329,7 +334,7 @@ namespace Project
                 return a;
             }
             Token token = eat("INT");
-            
+
             return new Integer(token.Content);
         }
         public ExpressionNode Term()
@@ -344,16 +349,17 @@ namespace Project
                     ExpressionNode right = this.Factor();
                     left = new MulNode(left, right);
                 }
-                else if(this.lookahead.Type == "DIV")
+                else if (this.lookahead.Type == "DIV")
                 {
                     this.eat("DIV");
                     ExpressionNode right = this.Factor();
                     left = new DivNode(left, right);
-                }else
+                }
+                else
                 {
                     this.eat("REST");
                     ExpressionNode right = this.Factor();
-                    left = new RestNode(left,right);
+                    left = new RestNode(left, right);
                 }
             }
             return left;
@@ -376,12 +382,12 @@ namespace Project
 
             return left;
         }
-    
+
         public ExpressionNode ParenthesizedExpression()
         {
             this.eat("LEFT");
             ExpressionNode exp = this.ArigmeticalExpression();
-            this.eat("RIGHT"); 
+            this.eat("RIGHT");
 
             return exp;
         }
@@ -390,12 +396,12 @@ namespace Project
             this.eat("SUB");
             return new NegNode(this.Factor());
         }
-    
+
         public ExpressionNode ConditionalExpression()
         {
             ExpressionNode left = this.Expression();
 
-             while (this.lookahead != null && (this.lookahead.Type == "OR" || this.lookahead.Type == "AND"))
+            while (this.lookahead != null && (this.lookahead.Type == "OR" || this.lookahead.Type == "AND"))
             {
 
                 if (this.lookahead.Type == "AND")
@@ -414,7 +420,7 @@ namespace Project
             }
 
             return left;
-        } 
-    
+        }
+
     }
 }

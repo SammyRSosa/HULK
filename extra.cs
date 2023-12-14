@@ -1,18 +1,21 @@
+using Project;
+
 namespace Project
 {
-    
+
 
     public class IfElseExpression : ExpressionNode
     {
         public dynamic Con;
-        public ExpressionNode act;
-        public ExpressionNode elseact;
-    public IfElseExpression(ExpressionNode Condicion,ExpressionNode Action,ExpressionNode ElseAction)
+        public string act;
+        public string elseact;
+        Scope scope;
+        public IfElseExpression(ExpressionNode Condicion, string Action, string ElseAction, Scope scope)
         {
             this.Con = Condicion;
             this.act = Action;
             this.elseact = ElseAction;
-
+            this.scope = scope;
         }
 
         public override bool CheckSemantics()
@@ -24,11 +27,13 @@ namespace Project
         {
             if (this.Con.Evaluate())
             {
-                return act.Evaluate();
+                Program.Proyecto proyecto = new Program.Proyecto(act, scope);
+                return proyecto.result;
             }
             else
             {
-                return elseact.Evaluate();
+                Program.Proyecto proyecto = new Program.Proyecto(elseact, scope);
+                return proyecto.result;
             }
         }
 
@@ -42,7 +47,7 @@ namespace Project
     {
         public string name;
         public Scope Value;
-        public Variable(string sValue,Scope scope)
+        public Variable(string sValue, Scope scope)
         {
             this.name = sValue;
             this.Value = scope;
@@ -66,10 +71,10 @@ namespace Project
 
     public class Function : ExpressionNode
     {
-        public Dictionary<int,Variable> var;
+        public Dictionary<int, Variable> var;
         public string code;
         public string name;
-        public Function(string name,Dictionary<int,Variable> variablearemplazar,string Codigobase)
+        public Function(string name, Dictionary<int, Variable> variablearemplazar, string Codigobase)
         {
             this.name = name;
             this.var = variablearemplazar;
@@ -96,135 +101,192 @@ namespace Project
 
     public class Scope
     {
-        public Dictionary<string,dynamic> Variables;
+        public Dictionary<string, dynamic> Variables;
 
-        public Dictionary<string,Function> Funciones;
-        
+        public Dictionary<string, Function> Funciones;
+
         public Scope()
         {
             this.Variables = new Dictionary<string, dynamic>();
             this.Funciones = new Dictionary<string, Function>();
         }
-    }
-}
 
-public class Printnode : ExpressionNode
-{
-    public ExpressionNode Exp;
-    public Printnode(ExpressionNode Expresion)
-    {
-        this.Exp = Expresion;
-    }
-    public override bool CheckSemantics()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override dynamic Evaluate()
-    {
-        try
+        public static Scope Copy(Scope scope)
         {
-            if (Exp.Evaluate().GetNodeType() == "null")
+            Scope return_scope = new Scope();
+
+            foreach (var item in scope.Variables.Keys)
             {
-                return new nullnode();
+                return_scope.Variables.Add(item, scope.Variables[item]);
             }
-        }
-        catch
-        {
+            foreach (var item in scope.Funciones.Keys)
+            {
+                return_scope.Funciones.Add(item, scope.Funciones[item]);
+            }
             
+            return return_scope;
+
         }
-        Console.WriteLine($"{this.Exp.Evaluate()}");
-        return new nullnode();
     }
 
-    public override string GetNodeType()
-    {
-        throw new NotImplementedException();
-    }
-}
 
-public class TrigNode : ExpressionNode
-{
-    public string Type;
-    ExpressionNode Input;
-    public TrigNode(string Type, ExpressionNode Input)
+    public class Printnode : ExpressionNode
     {
-        this.Type = Type;
-        this.Input = Input;
-
-    }
-    public override dynamic Evaluate()
-    {
-        switch (this.Type)
+        public dynamic Exp;
+        public Printnode(dynamic Expresion)
         {
-            case "cos":
-                return Math.Cos(Input.Evaluate());
-            case "sin":
-                return Math.Sin(Input.Evaluate());
-            case "tan":
-                return Math.Tan(Input.Evaluate());
-            case "acos":
-                return Math.Acos(Input.Evaluate());
-            case "asin":
-                return Math.Asin(Input.Evaluate());
-            case "atan":
-                return Math.Atan(Input.Evaluate());
-            default:
-                break;
+            this.Exp = Expresion;
         }
-         throw new Exception("missed trig");
+        public override bool CheckSemantics()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override dynamic Evaluate()
+        {
+            Console.WriteLine($"{this.Exp}");
+            return new nullnode();
+        }
+
+        
+        public override string GetNodeType()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class node_function : ExpressionNode
+    {
+        public Scope scope { get; private set; }
+        Function function;
+        public node_function(Scope scope, Function function)
+        {
+            this.scope = scope;
+            this.function = function;
+        }
+        public override bool CheckSemantics()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override dynamic Evaluate()
+        {
+
+            Program.Proyecto proyecto = new Program.Proyecto(function.code, scope);
+            return proyecto.result;
+        }
+
+        public override string GetNodeType()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class TrigNode : ExpressionNode
+    {
+        public string Type;
+        ExpressionNode Input;
+        public TrigNode(string Type, ExpressionNode Input)
+        {
+            this.Type = Type;
+            this.Input = Input;
+
+        }
+        public override dynamic Evaluate()
+        {
+            switch (this.Type)
+            {
+                case "cos":
+                    return Math.Cos(Input.Evaluate());
+                case "sin":
+                    return Math.Sin(Input.Evaluate());
+                case "tan":
+                    return Math.Tan(Input.Evaluate());
+                case "acos":
+                    return Math.Acos(Input.Evaluate());
+                case "asin":
+                    return Math.Asin(Input.Evaluate());
+                case "atan":
+                    return Math.Atan(Input.Evaluate());
+                default:
+                    break;
+            }
+            throw new Exception("missed trig");
+        }
+
+        public override bool CheckSemantics()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetNodeType()
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public override bool CheckSemantics()
+    public class nullnode : ExpressionNode
     {
-        throw new NotImplementedException();
+        public override bool CheckSemantics()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override dynamic Evaluate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetNodeType()
+        {
+            return "null";
+        }
     }
 
-    public override string GetNodeType()
+    public class Log_node : ExpressionNode
     {
-        throw new NotImplementedException();
-    }
-}
+        ExpressionNode bas;
+        ExpressionNode exponent;
+        public Log_node(ExpressionNode bas, ExpressionNode exponent)
+        {
+            this.bas = bas;
+            this.exponent = exponent;
+        }
+        public override bool CheckSemantics()
+        {
+            throw new NotImplementedException();
+        }
 
-public class nullnode : ExpressionNode
-{
-    public override bool CheckSemantics()
-    {
-        throw new NotImplementedException();
-    }
+        public override dynamic Evaluate()
+        {
+            return Math.Log(exponent.Evaluate(), bas.Evaluate());
+        }
 
-    public override dynamic Evaluate()
-    {
-        throw new NotImplementedException();
+        public override string GetNodeType()
+        {
+            throw new NotImplementedException();
+        }
     }
-
-    public override string GetNodeType()
+    public class ErrorNode : ExpressionNode
     {
-        return "null";
-    }
-}
+        string Message;
+        public ErrorNode(string Message)
+        {
+            this.Message = Message;
+        }
 
-public class ErrorNode : ExpressionNode
-{
-    string Message;
-    public ErrorNode(string Message)
-    {
-        this.Message = Message;
-    }
+        public override bool CheckSemantics()
+        {
+            throw new NotImplementedException();
+        }
 
-    public override bool CheckSemantics()
-    {
-        throw new NotImplementedException();
-    }
+        public override dynamic Evaluate()
+        {
+            System.Console.WriteLine($"{Message}");
+            return true;
+        }
 
-    public override dynamic Evaluate()
-    {
-        System.Console.WriteLine($"{Message}");
-        return true;
-    }
-
-    public override string GetNodeType()
-    {
-        throw new NotImplementedException();
+        public override string GetNodeType()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
