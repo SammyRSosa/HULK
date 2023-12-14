@@ -27,7 +27,7 @@ namespace Project
                 throw new Exception("null reference");
 
             if (token.Type != Type)
-                throw new Exception($"{Type} expected");
+                throw new Exception($"Syntax Error :{Type} expected");
 
 
             this.lookahead = this.lexer.Next();
@@ -119,7 +119,7 @@ namespace Project
 
                     return new Printnode(respuesta);
                 }
-                
+
                 if (this.lookahead.Content == "log")
                 {
                     eat("SYMBOL");
@@ -127,11 +127,11 @@ namespace Project
                     dynamic bas = this.Expression();
                     eat("DOT");
                     dynamic exponent = this.Expression();
-                    
+
                     eat("RIGHT");
 
-                    return new Log_node(bas,exponent);
-                        
+                    return new Log_node(bas, exponent);
+
                 }
 
                 if (this.lookahead.Content == "cos" || this.lookahead.Content == "sin" || this.lookahead.Content == "tan" || this.lookahead.Content == "asin" || this.lookahead.Content == "acos" || this.lookahead.Content == "atan")
@@ -188,7 +188,7 @@ namespace Project
                     }
 
 
-                    return new node_function(scopefuncion,scopeactual.Funciones[name]);
+                    return new node_function(scopefuncion, scopeactual.Funciones[name]);
                 }
                 else
                 {
@@ -313,7 +313,7 @@ namespace Project
                     eat(this.lookahead.Type);
                 }
 
-                return new IfElseExpression(Condition, Code, Code2,this.scopeactual);
+                return new IfElseExpression(Condition, Code, Code2, this.scopeactual);
             }
 
             if (this.lookahead.Type == "LEFT")

@@ -9,7 +9,7 @@
         {
 
             Scope mainscope = new Scope();
-            mainscope.Variables.Add("pi",Math.PI);
+            mainscope.Variables.Add("pi", Math.PI);
 
             System.Console.WriteLine("Bienvenido a HULK");
 
@@ -30,7 +30,7 @@
                             Proyecto project = new Proyecto(sample, mainscope);
 
                             mainscope = Scope.Copy(project.parser.scopeactual);
-                            
+
                         }
                         catch (System.Exception)
                         {
@@ -91,9 +91,9 @@
                 new TokenDefinition(@"\@", "AT"),
                 new TokenDefinition(@"\;", "SEMI"),
                 };
-            
+
                 TextReader r = new StringReader(samplee);
-                Lexer lexer = new Lexer(r,defs);
+                Lexer lexer = new Lexer(r, defs);
 
                 try
                 {
@@ -104,8 +104,6 @@
                 {
                     System.Console.WriteLine($"{message.Message}");
                 }
-
-
             }
         }
 

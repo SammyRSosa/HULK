@@ -8,7 +8,7 @@ public abstract class ExpressionNode
 
 public abstract class BinaryNode : ExpressionNode
 {
-   public ExpressionNode Left => this.left;
+    public ExpressionNode Left => this.left;
 
     public ExpressionNode Right => this.right;
 
@@ -21,7 +21,7 @@ public abstract class BinaryNode : ExpressionNode
         this.right = right;
     }
 
-   
+
 }
 public abstract class BinaryArithmeticNode : BinaryNode
 {
@@ -31,9 +31,9 @@ public abstract class BinaryArithmeticNode : BinaryNode
 
     public override bool CheckSemantics()
     {
-       return this.Left.GetNodeType() == "int" && this.Right.GetNodeType() == "int";
+        return this.Left.GetNodeType() == "int" && this.Right.GetNodeType() == "int";
     }
-  public override string GetNodeType()
+    public override string GetNodeType()
     {
         return "int";
     }
@@ -65,9 +65,9 @@ public class AddNode : BinaryArithmeticNode
 {
     public override dynamic Evaluate()
     {
-        return this.Left.Evaluate() + this.Right.Evaluate() ;
+        return this.Left.Evaluate() + this.Right.Evaluate();
     }
-   
+
     public AddNode(ExpressionNode left, ExpressionNode right) : base(left, right)
     {
 
@@ -131,7 +131,7 @@ public class PowNode : BinaryArithmeticNode
 {
     public override dynamic Evaluate()
     {
-        return Math.Pow(Left.Evaluate(),Right.Evaluate());
+        return Math.Pow(Left.Evaluate(), Right.Evaluate());
 
     }
 
@@ -180,12 +180,12 @@ public abstract class NumeriComparison : BinaryNode
     protected NumeriComparison(ExpressionNode left, ExpressionNode right) : base(left, right)
     {
 
-    }   
-      public override bool CheckSemantics()
-    {
-       return this.Left.GetNodeType() == "int" && this.Right.GetNodeType() == "int";
     }
-  public override string GetNodeType()
+    public override bool CheckSemantics()
+    {
+        return this.Left.GetNodeType() == "int" && this.Right.GetNodeType() == "int";
+    }
+    public override string GetNodeType()
     {
         return "bool";
     }
@@ -292,7 +292,7 @@ public class AndNode : ConditionalExpression
 
     public override dynamic Evaluate()
     {
-        return this.Left.Evaluate() && this.Right.Evaluate(); 
+        return this.Left.Evaluate() && this.Right.Evaluate();
     }
 }
 
@@ -304,7 +304,7 @@ public class OrNode : ConditionalExpression
 
     public override dynamic Evaluate()
     {
-        return this.Left.Evaluate() || this.Right.Evaluate(); 
+        return this.Left.Evaluate() || this.Right.Evaluate();
     }
 }
 
@@ -313,7 +313,7 @@ public class LiteralNode : ExpressionNode
     public string value;
     public LiteralNode(string sValue)
     {
-        this.value = sValue.Substring(1,sValue.Length-2);
+        this.value = sValue.Substring(1, sValue.Length - 2);
     }
     public override dynamic Evaluate()
     {

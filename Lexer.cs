@@ -47,7 +47,7 @@ namespace Project
 
                     if (Type == "BAD-SYMBOL")
                     {
-                        System.Console.WriteLine("found Bad Symbol");
+                        System.Console.WriteLine($"Lexical Error : {TokenContents}");
                     }
 
                     return new Token(Type, TokenContents, Position); ;

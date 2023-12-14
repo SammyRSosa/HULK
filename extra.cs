@@ -123,7 +123,7 @@ namespace Project
             {
                 return_scope.Funciones.Add(item, scope.Funciones[item]);
             }
-            
+
             return return_scope;
 
         }
@@ -148,7 +148,7 @@ namespace Project
             return new nullnode();
         }
 
-        
+
         public override string GetNodeType()
         {
             throw new NotImplementedException();
