@@ -15,6 +15,7 @@
 
             while (true)
             {
+                System.Console.Write(">");
                 string sample = Console.ReadLine();
 
                 if (sample != "")
