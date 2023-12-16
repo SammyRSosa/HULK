@@ -39,7 +39,7 @@ namespace Project
 
         public override string GetNodeType()
         {
-            return "";
+            return "int";
         }
     }
 
@@ -64,7 +64,7 @@ namespace Project
 
         public override string GetNodeType()
         {
-            throw new NotImplementedException();
+            return this.Value.Variables[this.name].GetNodeType();
         }
     }
 

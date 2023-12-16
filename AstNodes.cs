@@ -64,7 +64,7 @@ public abstract class UnaryNode : ExpressionNode
 public class AddNode : BinaryArithmeticNode
 {
     public override dynamic Evaluate()
-    {
+    { 
         return this.Left.Evaluate() + this.Right.Evaluate();
     }
 
@@ -256,7 +256,7 @@ public class EqualNode : BinaryNode
 
     public override dynamic Evaluate()
     {
-        throw new NotImplementedException();
+        return this.Left.Evaluate() == this.Right.Evaluate();
     }
 
     public override string GetNodeType()

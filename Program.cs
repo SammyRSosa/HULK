@@ -58,7 +58,7 @@
 
                 scope_actual = Scope.Copy(scope_received);
 
-                string samplee = Code;
+                string sample = Code;
                 TokenDefinition[] defs = new TokenDefinition[]
                 {
                 new TokenDefinition(@"([""'])(?:\\\1|.)*?\1", "QUOTED-STRING"),
@@ -92,7 +92,7 @@
                 new TokenDefinition(@"\;", "SEMI"),
                 };
 
-                TextReader r = new StringReader(samplee);
+                TextReader r = new StringReader(sample);
                 Lexer lexer = new Lexer(r, defs);
 
                 try

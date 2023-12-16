@@ -184,7 +184,10 @@ namespace Project
 
                     for (int i = 0; i < dic.Count; i++)
                     {
+                        if(scopefuncion.Funciones[name].var.ContainsKey(i))
                         scopefuncion.Variables.Add(scopefuncion.Funciones[name].var[i].name, dic[i]);
+                        else
+                        throw new Exception("wrong function parametters");
                     }
 
 
